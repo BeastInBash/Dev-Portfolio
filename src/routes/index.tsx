@@ -95,7 +95,7 @@ type Social = {
 const SOCIALS: Social[] = [
     {
         name: 'LinkedIn',
-        href: 'https://www.linkedin.com/in/saifdev',
+        href: 'https://www.linkedin.com/in/saifdev01',
         Icon: Linkedin,
         rx: 212,
         ry: 224,
@@ -104,7 +104,7 @@ const SOCIALS: Social[] = [
     },
     {
         name: 'Twitter',
-        href: 'https://twitter.com/saifdev',
+        href: 'https://x.com/_beast0',
         Icon: Twitter,
         rx: 238,
         ry: 198,
@@ -113,7 +113,7 @@ const SOCIALS: Social[] = [
     },
     {
         name: 'Instagram',
-        href: 'https://www.instagram.com/saifdev',
+        href: 'https://www.instagram.com/_saif.dev',
         Icon: Instagram,
         rx: 196,
         ry: 236,
