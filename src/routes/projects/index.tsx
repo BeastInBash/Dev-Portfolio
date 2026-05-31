@@ -1,0 +1,63 @@
+import { createFileRoute } from '@tanstack/react-router'
+import { ArrowUpRight } from 'lucide-react'
+import { PageHeading } from '#/components/PageHeading'
+
+export const Route = createFileRoute('/projects/')({ component: Projects })
+
+const PROJECTS = [
+    {
+        title: 'Ledger',
+        tag: 'Full-stack · Postgres',
+        blurb: 'A double-entry bookkeeping app with a typed API and a fast, keyboard-driven UI.',
+        href: '#',
+    },
+    {
+        title: 'Drip',
+        tag: 'Next.js · Stripe',
+        blurb: 'Subscription storefront with server-rendered catalog and edge-cached checkout.',
+        href: '#',
+    },
+    {
+        title: 'Pulse',
+        tag: 'Node · WebSockets',
+        blurb: 'Real-time dashboard streaming metrics from a Node service to a React client.',
+        href: '#',
+    },
+]
+
+function Projects() {
+    return (
+        <section className="mx-auto max-w-7xl px-6 pt-20 pb-24 lg:pt-28">
+            <PageHeading
+                index="01"
+                label="Projects"
+                title="Selected work."
+                intro="A few things I've built end-to-end — from data model and API to the polished interface on top."
+            />
+
+            <ul className="border-t border-line">
+                {PROJECTS.map((p) => (
+                    <li key={p.title}>
+                        <a
+                            href={p.href}
+                            className="group flex flex-col gap-2 border-b border-line py-8 transition-colors hover:bg-ink/[0.02] sm:flex-row sm:items-baseline sm:justify-between"
+                        >
+                            <div className="max-w-xl">
+                                <h2 className="font-serif text-2xl text-ink">
+                                    {p.title}
+                                    <ArrowUpRight className="ml-1 inline h-4 w-4 -translate-y-0.5 text-muted-warm transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-1" />
+                                </h2>
+                                <p className="mt-2 font-display leading-relaxed text-muted-warm">
+                                    {p.blurb}
+                                </p>
+                            </div>
+                            <span className="shrink-0 font-mono text-xs uppercase tracking-[0.18em] text-muted-warm">
+                                {p.tag}
+                            </span>
+                        </a>
+                    </li>
+                ))}
+            </ul>
+        </section>
+    )
+}
