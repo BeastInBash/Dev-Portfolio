@@ -58,13 +58,16 @@ function AnimatedOutlet() {
 
 function RootComponent() {
     return (
-        <>
+        // Fixed-height shell: navbar stays pinned, <main> is the scroll region so
+        // long pages (e.g. the blog list) scroll while short pages don't overflow.
+        <div className="flex h-screen flex-col">
             <Navbar />
-            {/* overflow-x-hidden clips the incoming page while it slides in */}
-            <main className="min-h-screen overflow-x-hidden">
+            {/* overflow-x-hidden clips the incoming page while it slides in;
+                overflow-y-auto lets content taller than the viewport scroll. */}
+            <main className="flex-1 overflow-x-hidden overflow-y-auto">
                 <AnimatedOutlet />
             </main>
-        </>
+        </div>
     )
 }
 
@@ -74,7 +77,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             <head>
                 <HeadContent />
             </head>
-            <body className='max-h-screen overflow-y-hidden'>
+            <body className="h-screen overflow-hidden">
                 {children}
                 <Scripts />
             </body>

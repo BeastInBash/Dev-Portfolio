@@ -22,6 +22,20 @@ body {
   margin: 0;
 }
 
+/* Smooth scrolling site-wide. <main> is the real scroll container (see __root),
+   html covers any document-level/anchor jumps. Disabled for reduced-motion users. */
+html,
+main {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html,
+  main {
+    scroll-behavior: auto;
+  }
+}
+
 @theme inline {
   --font-heading: var(--font-mono);
   --font-mono: 'JetBrains Mono Variable', monospace;

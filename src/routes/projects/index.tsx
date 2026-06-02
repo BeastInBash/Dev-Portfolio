@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowUpRight } from 'lucide-react'
 import { PageHeading } from '#/components/PageHeading'
 
@@ -6,23 +6,18 @@ export const Route = createFileRoute('/projects/')({ component: Projects })
 
 const PROJECTS = [
     {
-        title: 'Ledger',
-        tag: 'Full-stack · Postgres',
-        blurb: 'A double-entry bookkeeping app with a typed API and a fast, keyboard-driven UI.',
-        href: '#',
+        title: 'Carbhartics',
+        tag: 'Full-stack · MongoDb · Nextjs · Typescript ',
+        blurb: 'One stop for you, to buy your dream car.',
+        href: 'https://carbhartics.com',
     },
     {
-        title: 'Drip',
-        tag: 'Next.js · Stripe',
-        blurb: 'Subscription storefront with server-rendered catalog and edge-cached checkout.',
-        href: '#',
+        title: 'Tasker',
+        tag: 'Reactjs · Nodejs · Expressjs · Typescript ',
+        blurb: 'A Staff and Task Management Platform where you can assign and montior work given to the staff.',
+        href: "https://employee-management-uzdd.vercel.app/",
     },
-    {
-        title: 'Pulse',
-        tag: 'Node · WebSockets',
-        blurb: 'Real-time dashboard streaming metrics from a Node service to a React client.',
-        href: '#',
-    },
+
 ]
 
 function Projects() {
@@ -38,8 +33,9 @@ function Projects() {
             <ul className="border-t border-line">
                 {PROJECTS.map((p) => (
                     <li key={p.title}>
-                        <a
-                            href={p.href}
+                        <Link
+                            target='_blank'
+                            to={p.href}
                             className="group flex flex-col gap-2 border-b border-line py-8 transition-colors hover:bg-ink/[0.02] sm:flex-row sm:items-baseline sm:justify-between"
                         >
                             <div className="max-w-xl">
@@ -54,7 +50,7 @@ function Projects() {
                             <span className="shrink-0 font-mono text-xs uppercase tracking-[0.18em] text-muted-warm">
                                 {p.tag}
                             </span>
-                        </a>
+                        </Link>
                     </li>
                 ))}
             </ul>

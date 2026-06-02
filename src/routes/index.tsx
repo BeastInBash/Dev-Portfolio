@@ -265,10 +265,10 @@ function Home() {
                 className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-16"
             >
                 {/* Left: status + headline + subtext */}
-                <div className="order-2 lg:order-1">
+                <div className="order-2 text-center lg:order-1 lg:text-left">
                     <motion.div
                         variants={rise}
-                        className="mb-8 flex items-center gap-3 font-mono text-xs uppercase tracking-[0.18em] text-ink/80"
+                        className="mb-8 flex items-center justify-center gap-3 font-mono text-xs uppercase tracking-[0.18em] text-ink/80 lg:justify-start"
                     >
                         <span className="relative flex h-2 w-2 items-center justify-center">
                             {[0, 1].map((i) => (
@@ -306,7 +306,7 @@ function Home() {
 
                     <motion.p
                         variants={rise}
-                        className="mt-8 max-w-md font-display text-lg leading-relaxed text-muted-warm"
+                        className="mt-8 mx-auto max-w-md font-display text-lg leading-relaxed text-muted-warm lg:mx-0"
                     >
                         I build fast, reliable web applications end-to-end — from API and
                         database to polished, responsive interfaces.
