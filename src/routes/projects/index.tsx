@@ -22,7 +22,7 @@ const PROJECTS = [
 
 function Projects() {
     return (
-        <section className="mx-auto max-w-7xl px-6 pt-20 pb-24 lg:pt-28">
+        <section className="mx-auto max-w-5xl px-6 pt-20 pb-24 lg:pt-28">
             <PageHeading
                 index="01"
                 label="Projects"

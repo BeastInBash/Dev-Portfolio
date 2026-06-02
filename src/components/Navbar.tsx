@@ -62,7 +62,7 @@ export const Navbar = () => {
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       className="sticky top-0 z-50 border-b border-line/70 bg-cream/80 backdrop-blur-md"
     >
-      <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-6">
+      <div className="mx-auto flex h-18 max-w-5xl items-center justify-between px-6">
         {/* Left: avatar + name */}
         <Link to="/" className="group flex items-center gap-3">
           <img

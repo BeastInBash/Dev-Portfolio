@@ -29,18 +29,25 @@ Package manager is **bun** (NOT npm/pnpm).
 ```
 src/
   routes/
-    __root.tsx        # html shell, <head> (meta/title/favicon), renders <Navbar/> + <main>{children}</main>
-    index.tsx         # "/" — hero section
-    about/index.tsx   # "/about"
+    __root.tsx          # html shell + fixed-height flex layout; <main> is the SCROLL CONTAINER (see gotchas)
+    index.tsx           # "/" — hero section
+    about/index.tsx     # "/about" (placeholder)
+    projects/index.tsx  # "/projects" — 01, list style
+    experience/index.tsx# "/experience" — 02, scroll-reveal vertical timeline
+    blog/index.tsx      # "/blog" — 03, list style (dummy posts)
+    contact/            # "/contact"
   components/
-    Navbar.tsx        # sticky top nav
-    ui/button.tsx     # shadcn
-  lib/utils.ts        # shadcn cn()
-  styles.css          # Tailwind import, @theme tokens, shadcn tokens, base layer
+    Navbar.tsx          # sticky top nav + mobile hamburger → slide-in sidebar
+    PageHeading.tsx     # shared editorial header (mono eyebrow `NN / LABEL` + display title + intro)
+    ui/button.tsx       # shadcn
+  lib/utils.ts          # shadcn cn()
+  styles.css            # Tailwind import, @theme tokens, shadcn tokens, base layer, smooth-scroll rules
 public/assets/
-  hero.png            # portrait (1241x1268, ~3.3MB)
-  favicon.png         # circular 256px crop of hero.png (favicon)
+  hero.png              # portrait (1241x1268, ~3.3MB)
+  favicon.png           # circular 256px crop of hero.png (favicon)
 ```
+
+Section numbering convention: Projects = `01`, Experience = `02`, Blog = `03` (passed as `index` to `PageHeading`).
 
 ## Design system (apply to ALL UI)
 
@@ -63,8 +70,13 @@ Warm editorial minimalism with an "engineering-log / terminal" meta layer. Heavy
 
 ## What's built so far
 
-- **Navbar** (`components/Navbar.tsx`): sticky, `bg-cream/80` + backdrop blur, hairline bottom border, `max-w-7xl`. Left = circular `hero.png` avatar + "Mohammad Saif". Center = Home / Project / Experience (mono, uppercase, moss underline-on-hover). Right = bordered "Contact" button (ink→cream invert on hover, `ArrowUpRight`). Fades down on mount. Links use TanStack `Link to="/" hash="..."` (single-page sections: `top`/`projects`/`experience`/`contact`). No mobile menu yet (`hidden md:flex`).
-- **Hero** (`routes/index.tsx`): two-column (`lg:grid-cols-2`). Left = pulsing **amber** status dot (two staggered `easeOut` ripple rings) + status line + typewriter headline **Builder. / Brewer. / Coder.** (typed char-by-char via `useTypewriter`, last word `text-moss`, blinking cursor) + subtext (full-stack, no UX claims) . Right = `hero.png` portrait. Staggered reveal. Stats block was intentionally removed.
+- **Layout shell** (`routes/__root.tsx`): fixed-height flex column — `<body>` is `h-screen overflow-hidden`, a `flex h-screen flex-col` wraps `<Navbar/>` + `<main>`, and **`<main>` is the scroll container** (`flex-1 overflow-y-auto overflow-x-hidden`). `overflow-x-hidden` clips the per-route slide-in animation (`AnimatedOutlet` re-keys on pathname, slides `x:100%→0`).
+- **Navbar** (`components/Navbar.tsx`): sticky, `bg-cream/80` + backdrop blur, hairline bottom border. Inner container `max-w-5xl` (the site-wide content width — every page section uses `mx-auto max-w-5xl px-6`). Left = circular `hero.png` avatar + "Mohammad Saif". Center = Home / Project / Experience / Blog (mono, uppercase, moss underline-on-hover; `hidden md:flex`). Right (desktop) = bordered "Contact" button. **Mobile**: a hamburger (`md:hidden`) opens a right-side **slide-in sidebar** (`AnimatePresence`, tween slide `x:100%→0`, fading blurred backdrop, links stagger in, Contact pinned at bottom). The sidebar is a **sibling of `<header>`** (returned from a fragment), NOT a child — see gotchas. Navbar fades down on mount.
+- **Hero** (`routes/index.tsx`): two-column (`lg:grid-cols-2`). Left = pulsing **amber** status dot (two staggered `easeOut` ripple rings) + status line + typewriter headline **Builder. / Brewer. / Coder.** (typed char-by-char via `useTypewriter`, last word `text-moss`, blinking cursor) + subtext (full-stack, no UX claims). Right = `hero.png` portrait with orbiting social + tech-stack icons (`useOrbit`, client-only, mounted post-hydration). Staggered reveal. **Left block centers on mobile** (`text-center lg:text-left`, status `justify-center lg:justify-start`, subtext `mx-auto lg:mx-0`).
+- **Projects** (`routes/projects/index.tsx`, `01`): hairline `<ul>` list (not cards); each row a `Link` with hover bg + `ArrowUpRight` nudge; mono tag on the right.
+- **Experience** (`routes/experience/index.tsx`, `02`): **scroll-reveal centered-spine timeline** from CV data (most-recent-first). Entries **alternate left/right of a central spine on `md+`** (text aligned toward the spine); on **mobile it's a left-rail layout** (line + nodes on the left, content left-aligned to the right). Each entry reveals on scroll via `whileInView` (`once`, `amount:0.4`) with staggered children — spine segment draws (`scaleY` origin-top, skipped on last entry), node pops, text rises. Current role's node is **moss with an infinite pulse ring**; past roles muted. Per-role **employment-type chip** (`Full-time` = moss/olive outline, `Intern` = neutral hairline).
+- **Blog** (`routes/blog/index.tsx`, `03`): list style (not cards), 4 dummy posts. Mirrors the experience two-column grid (`sm:grid-cols-[10rem_1fr]`, date left) with the projects-style row `Link` + `ArrowUpRight` hover.
+- **Smooth scrolling** (`styles.css`): `scroll-behavior: smooth` on `html` + `main` (the real scroller), with a `prefers-reduced-motion: reduce` override → `auto`.
 - **Favicon**: circular `public/assets/favicon.png` wired in `__root.tsx`.
 
 ## Conventions & gotchas
@@ -72,3 +84,6 @@ Warm editorial minimalism with an "engineering-log / terminal" meta layer. Heavy
 - Reference `public/` assets by URL (`'/assets/hero.png'`), do NOT import them.
 - Typewriter/animations are client-only; initial SSR renders empty lines then types in on hydration (no layout shift — lines reserve height).
 - Keep accent usage sparse — moss green is a highlight, not a fill.
+- **The scroll container is `<main>`, not the window/body.** `<body>` is `overflow-hidden`; `<main>` owns the vertical scroll. So: target `main` for scroll CSS (`scroll-behavior`); for scroll-linked animation prefer `whileInView` (IntersectionObserver works against the viewport regardless) — `useScroll` would need a `container` ref to the `<main>` element. To scroll programmatically (e.g. in tests), scroll `document.querySelector('main')`, not `window`.
+- **`backdrop-filter`/`filter` creates a containing block for `position: fixed` descendants.** The Navbar `<header>` has `backdrop-blur`, so a fixed overlay rendered *inside* it gets trapped (sized to the 72px bar). The mobile sidebar is therefore a **sibling of `<header>`** (Navbar returns a fragment) to stay viewport-fixed. Render any future full-screen fixed overlay outside the blurred header.
+- For scroll-reveal, use the shared variant style (container `staggerChildren` + `whileInView` with `viewport={{ once: true, amount }}`), ease `[0.22,1,0.36,1]`.

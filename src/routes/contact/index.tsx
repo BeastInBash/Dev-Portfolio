@@ -5,15 +5,16 @@ import { PageHeading } from '#/components/PageHeading'
 export const Route = createFileRoute('/contact/')({ component: Contact })
 
 const CHANNELS = [
-    { label: 'Email', value: 'saifdev0847@gmail.com', href: 'mailto:saifdev0847@gmail.com' },
-    { label: 'LinkedIn', value: '/in/saifdev', href: 'https://www.linkedin.com/in/saifdev' },
-    { label: 'Twitter', value: '@saifdev', href: 'https://twitter.com/saifdev' },
-    { label: 'GitHub', value: '/saifdev', href: 'https://github.com/saifdev' },
+    {id : 1, label: 'Email', value: 'saifdev0847@gmail.com', href: 'mailto:saifdev0847@gmail.com' },
+    {id : 2, label: 'LinkedIn', value: '/in/saifdev01', href: 'https://www.linkedin.com/in/saifdev01' },
+    {id : 3, label: 'Twitter', value: '@_beast0', href: 'https://x.com/_beast0' },
+    {id : 4, label: 'GitHub', value: '/BeastInBash', href: 'https://github.com/BeastInBash' },
+    {id : 5, label: 'GitHub', value: '/TheBeast01', href: 'https://github.com/thebeast01' },
 ]
 
 function Contact() {
     return (
-        <section className="mx-auto max-w-7xl px-6 pt-20 pb-24 lg:pt-28">
+        <section className="mx-auto max-w-5xl px-6 pt-20 pb-24 lg:pt-28">
             <PageHeading
                 index="03"
                 label="Contact"
@@ -23,7 +24,7 @@ function Contact() {
 
             <ul className="border-t border-line">
                 {CHANNELS.map((c) => (
-                    <li key={c.label}>
+                    <li key={c.id}>
                         <a
                             href={c.href}
                             target={c.href.startsWith('http') ? '_blank' : undefined}

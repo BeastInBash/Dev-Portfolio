@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { motion, useAnimationFrame, useMotionValue } from 'motion/react'
 import type { Variants } from 'motion/react'
-import { Instagram, Linkedin, Twitter } from 'lucide-react'
+import { CoffeeIcon, Instagram, Linkedin, Twitter } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import type { ComponentType } from 'react'
 
@@ -221,6 +221,7 @@ const TECH: Tech[] = [
     { name: 'Node.js', Icon: NodeIcon, rx: 154, ry: 198, speed: 8, phase: 214, blob: '38% 62% 55% 45% / 58% 42% 58% 42%' },
     { name: 'TypeScript', Icon: TypeScriptIcon, rx: 244, ry: 156, speed: 10, phase: 288, blob: '60% 40% 47% 53% / 41% 57% 43% 59%' },
     { name: 'JavaScript', Icon: JavaScriptIcon, rx: 180, ry: 236, speed: -13, phase: 338, blob: '45% 55% 52% 48% / 62% 44% 56% 38%' },
+    { name: 'Coffee', Icon: CoffeeIcon, rx: 180, ry: 236, speed: -13, phase: 338, blob: '45% 55% 52% 48% / 62% 44% 56% 38%' },
 ]
 
 /** A non-clickable tech-stack chip revolving on its own orbit; pauses while hovered. */
@@ -257,7 +258,7 @@ function Home() {
     useEffect(() => setMounted(true), [])
 
     return (
-        <section id="top" className="mx-auto max-w-7xl px-6 pt-20 pb-24 lg:pt-28">
+        <section id="top" className="mx-auto max-w-5xl flex items-center justify-center px-6 pt-20 pb-24 lg:pt-28">
             <motion.div
                 variants={container}
                 initial="hidden"

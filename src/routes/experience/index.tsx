@@ -87,7 +87,7 @@ const rise: Variants = {
 
 function Experience() {
     return (
-        <section className="mx-auto max-w-7xl px-6 pt-20 pb-24 lg:pt-28">
+        <section className="mx-auto max-w-5xl px-6 pt-20 pb-24 lg:pt-28">
             <PageHeading
                 index="02"
                 label="Experience"
@@ -95,9 +95,12 @@ function Experience() {
                 intro="From frontend beginnings to full-stack engineering — a few years of building and shipping real products, end to end."
             />
 
-            <ol className="relative">
+            {/* Centered spine timeline: entries alternate left/right of a central
+                line on md+; stacks to a centered single column on mobile. */}
+            <ol className="relative mx-auto max-w-4xl">
                 {ROLES.map((r, i) => {
                     const isLast = i === ROLES.length - 1
+                    const isLeft = i % 2 === 0
                     return (
                         <motion.li
                             key={`${r.org}-${r.period}`}
@@ -105,22 +108,23 @@ function Experience() {
                             initial="hidden"
                             whileInView="show"
                             viewport={{ once: true, amount: 0.4 }}
-                            className="relative grid gap-2 pb-12 pl-10 last:pb-0 sm:grid-cols-[11rem_1fr] sm:pl-12"
+                            className="relative flex flex-col pb-14 pl-10 text-left last:pb-0 md:grid md:grid-cols-2 md:items-start md:gap-x-12 md:pl-0"
                         >
-                            {/* connector line to the next node (skipped on the last entry) */}
+                            {/* spine segment to the next node (skipped on last) —
+                                left rail on mobile, centered on md+ */}
                             {!isLast && (
                                 <motion.span
                                     aria-hidden
                                     variants={lineGrow}
-                                    className="absolute left-[4px] top-3 h-full w-px origin-top bg-line"
+                                    className="absolute left-[4px] top-3 h-full w-px origin-top bg-line md:left-1/2 md:-translate-x-1/2"
                                 />
                             )}
 
-                            {/* node */}
+                            {/* node — on the left rail on mobile, on the spine on md+ */}
                             <motion.span
                                 aria-hidden
                                 variants={dotPop}
-                                className="absolute left-0 top-2 flex h-[9px] w-[9px] items-center justify-center"
+                                className="absolute left-0 top-2 flex h-[9px] w-[9px] items-center justify-center md:left-1/2 md:-translate-x-1/2"
                             >
                                 {r.current && (
                                     <motion.span
@@ -136,15 +140,24 @@ function Experience() {
                                 />
                             </motion.span>
 
-                            <motion.span
+                            {/* content — right of the left rail on mobile, on one
+                                side of the spine on md+ */}
+                            <motion.div
                                 variants={rise}
-                                className="font-mono text-xs uppercase tracking-[0.18em] text-muted-warm"
+                                className={`flex max-w-md flex-col items-start text-left md:max-w-none ${
+                                    isLeft
+                                        ? 'md:col-start-1 md:items-end md:pr-12 md:text-right'
+                                        : 'md:col-start-2 md:items-start md:pl-12 md:text-left'
+                                }`}
                             >
-                                {r.period}
-                            </motion.span>
-
-                            <motion.div variants={rise} className="max-w-xl">
-                                <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+                                <span className="font-mono text-xs uppercase tracking-[0.18em] text-muted-warm">
+                                    {r.period}
+                                </span>
+                                <div
+                                    className={`mt-2 flex flex-wrap items-center justify-start gap-x-3 gap-y-2 ${
+                                        isLeft ? 'md:justify-end' : 'md:justify-start'
+                                    }`}
+                                >
                                     <h2 className="font-serif text-2xl text-ink">
                                         {r.role} <span className="text-muted-warm">· {r.org}</span>
                                     </h2>
