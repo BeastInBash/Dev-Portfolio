@@ -6,31 +6,10 @@ export const Route = createFileRoute('/blog/')({ component: Blog })
 
 const POSTS = [
     {
-        date: 'May 2026',
-        title: 'Why I moved my portfolio to TanStack Start',
-        tag: 'TanStack · SSR',
-        blurb: 'File-based routing, real SSR and zero config — what I gained switching away from a hand-rolled setup.',
-        href: '#',
-    },
-    {
-        date: 'Apr 2026',
-        title: 'Typewriter effects without the layout shift',
-        tag: 'React · Motion',
-        blurb: 'How I reserve line height up front so the hero never jumps as text types in on hydration.',
-        href: '#',
-    },
-    {
-        date: 'Mar 2026',
-        title: 'Tailwind v4 is config-less — here is how I theme',
-        tag: 'Tailwind · CSS',
-        blurb: 'Dropping the JS config for @theme tokens in one stylesheet, and the warm palette it let me build.',
-        href: '#',
-    },
-    {
-        date: 'Feb 2026',
-        title: 'A year of shipping full-stack, end to end',
-        tag: 'Career · Notes',
-        blurb: 'Lessons from twelve months owning the whole stack — from Postgres schemas to the last pixel.',
+        date: 'Soon...',
+        title: 'Comming Soon....',
+        tag: 'Working on It',
+        blurb: "Work on  the Editor is under development. Once its done i'll add my blogs. ",
         href: '#',
     },
 ]
