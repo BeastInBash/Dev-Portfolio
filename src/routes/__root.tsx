@@ -6,9 +6,11 @@ import {
     useRouterState,
 } from '@tanstack/react-router'
 import { motion } from 'motion/react'
+import { useEffect } from 'react'
 
 import appCss from '../styles.css?url'
 import { Navbar } from '#/components/Navbar'
+import { apiFetch } from '#/lib/api'
 
 export const Route = createRootRoute({
     head: () => ({
@@ -57,11 +59,27 @@ function AnimatedOutlet() {
 }
 
 function RootComponent() {
+    // The admin panel renders its own chrome (see routes/admin/route.tsx), so the
+    // public Navbar is suppressed for any /admin path.
+    const isAdmin = useRouterState({
+        select: (s) => s.location.pathname.startsWith('/admin'),
+    })
+
+    // Count one visit per browser session (sessionStorage guard), excluding the
+    // admin panel so editing sessions don't inflate the numbers. The backend
+    // dedups unique visitors via the persistent `vid` cookie.
+    useEffect(() => {
+        if (isAdmin) return
+        if (sessionStorage.getItem('visit-counted')) return
+        sessionStorage.setItem('visit-counted', '1')
+        apiFetch('/analytics/visit', { method: 'POST' }).catch(() => {})
+    }, [isAdmin])
+
     return (
         // Fixed-height shell: navbar stays pinned, <main> is the scroll region so
         // long pages (e.g. the blog list) scroll while short pages don't overflow.
         <div className="flex h-screen flex-col">
-            <Navbar />
+            {!isAdmin && <Navbar />}
             {/* overflow-x-hidden clips the incoming page while it slides in;
                 overflow-y-auto lets content taller than the viewport scroll. */}
             <main className="flex-1 overflow-x-hidden overflow-y-auto">

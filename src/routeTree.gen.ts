@@ -9,13 +9,22 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProjectsIndexRouteImport } from './routes/projects/index'
 import { Route as ExperienceIndexRouteImport } from './routes/experience/index'
 import { Route as ContactIndexRouteImport } from './routes/contact/index'
 import { Route as BlogIndexRouteImport } from './routes/blog/index'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AboutIndexRouteImport } from './routes/about/index'
+import { Route as BlogSlugRouteImport } from './routes/blog/$slug'
+import { Route as AdminEditorIndexRouteImport } from './routes/admin/editor/index'
 
+const AdminRouteRoute = AdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -41,60 +50,105 @@ const BlogIndexRoute = BlogIndexRouteImport.update({
   path: '/blog/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AboutIndexRoute = AboutIndexRouteImport.update({
   id: '/about/',
   path: '/about/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/blog/$slug',
+  path: '/blog/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminEditorIndexRoute = AdminEditorIndexRouteImport.update({
+  id: '/editor/',
+  path: '/editor/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
+  '/blog/$slug': typeof BlogSlugRoute
   '/about/': typeof AboutIndexRoute
+  '/admin/': typeof AdminIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/contact/': typeof ContactIndexRoute
   '/experience/': typeof ExperienceIndexRoute
   '/projects/': typeof ProjectsIndexRoute
+  '/admin/editor/': typeof AdminEditorIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/about': typeof AboutIndexRoute
+  '/admin': typeof AdminIndexRoute
   '/blog': typeof BlogIndexRoute
   '/contact': typeof ContactIndexRoute
   '/experience': typeof ExperienceIndexRoute
   '/projects': typeof ProjectsIndexRoute
+  '/admin/editor': typeof AdminEditorIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
+  '/blog/$slug': typeof BlogSlugRoute
   '/about/': typeof AboutIndexRoute
+  '/admin/': typeof AdminIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/contact/': typeof ContactIndexRoute
   '/experience/': typeof ExperienceIndexRoute
   '/projects/': typeof ProjectsIndexRoute
+  '/admin/editor/': typeof AdminEditorIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
+    | '/blog/$slug'
     | '/about/'
+    | '/admin/'
     | '/blog/'
     | '/contact/'
     | '/experience/'
     | '/projects/'
+    | '/admin/editor/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/blog' | '/contact' | '/experience' | '/projects'
+  to:
+    | '/'
+    | '/blog/$slug'
+    | '/about'
+    | '/admin'
+    | '/blog'
+    | '/contact'
+    | '/experience'
+    | '/projects'
+    | '/admin/editor'
   id:
     | '__root__'
     | '/'
+    | '/admin'
+    | '/blog/$slug'
     | '/about/'
+    | '/admin/'
     | '/blog/'
     | '/contact/'
     | '/experience/'
     | '/projects/'
+    | '/admin/editor/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRouteRoute: typeof AdminRouteRouteWithChildren
+  BlogSlugRoute: typeof BlogSlugRoute
   AboutIndexRoute: typeof AboutIndexRoute
   BlogIndexRoute: typeof BlogIndexRoute
   ContactIndexRoute: typeof ContactIndexRoute
@@ -104,6 +158,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -139,6 +200,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/about/': {
       id: '/about/'
       path: '/about'
@@ -146,11 +214,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/blog/$slug': {
+      id: '/blog/$slug'
+      path: '/blog/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/editor/': {
+      id: '/admin/editor/'
+      path: '/editor'
+      fullPath: '/admin/editor/'
+      preLoaderRoute: typeof AdminEditorIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
   }
 }
 
+interface AdminRouteRouteChildren {
+  AdminIndexRoute: typeof AdminIndexRoute
+  AdminEditorIndexRoute: typeof AdminEditorIndexRoute
+}
+
+const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminIndexRoute: AdminIndexRoute,
+  AdminEditorIndexRoute: AdminEditorIndexRoute,
+}
+
+const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
+  AdminRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRouteRoute: AdminRouteRouteWithChildren,
+  BlogSlugRoute: BlogSlugRoute,
   AboutIndexRoute: AboutIndexRoute,
   BlogIndexRoute: BlogIndexRoute,
   ContactIndexRoute: ContactIndexRoute,
