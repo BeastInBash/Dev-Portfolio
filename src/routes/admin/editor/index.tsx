@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import {
@@ -15,7 +15,13 @@ import {
 } from 'lucide-react'
 import { apiFetch } from '#/lib/api'
 
-export const Route = createFileRoute('/admin/editor/')({ component: Editor })
+export const Route = createFileRoute('/admin/editor/')({
+    component: Editor,
+    // `?edit=<id>` switches the editor into edit mode for an existing post.
+    validateSearch: (search: Record<string, unknown>): { edit?: string } => ({
+        edit: typeof search.edit === 'string' ? search.edit : undefined,
+    }),
+})
 
 const STARTER = `# Start writing…
 
@@ -36,6 +42,8 @@ type Mode = 'write' | 'preview'
 
 function Editor() {
     const navigate = useNavigate()
+    const { edit } = Route.useSearch()
+    const [editingId, setEditingId] = useState<string | null>(null)
     const [title, setTitle] = useState('')
     const [banner, setBanner] = useState('')
     const [bannerFile, setBannerFile] = useState<File | null>(null)
@@ -47,6 +55,23 @@ function Editor() {
     const [submitting, setSubmitting] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const fileRef = useRef<HTMLInputElement>(null)
+
+    // Edit mode: pull the existing post and pre-fill the form.
+    useEffect(() => {
+        if (!edit) return
+        apiFetch(`/blogs/admin/${edit}`)
+            .then((res) => (res.ok ? res.json() : null))
+            .then((p) => {
+                if (!p) return
+                setEditingId(p._id)
+                setTitle(p.title ?? '')
+                setBanner(p.bannerImg ?? '')
+                setBannerFile(null)
+                setTags(Array.isArray(p.tags) ? p.tags : [])
+                setContent(p.content ?? '')
+            })
+            .catch(() => setError('Could not load the post to edit'))
+    }, [edit])
 
     const { words, minutes } = useMemo(() => {
         const w = content.trim() ? content.trim().split(/\s+/).length : 0
@@ -94,12 +119,15 @@ function Editor() {
             }
 
             // Empty headers so the browser sets the multipart boundary itself
-            // (apiFetch otherwise forces application/json).
-            const res = await apiFetch('/blogs', {
-                method: 'POST',
-                body: form,
-                headers: {},
-            })
+            // (apiFetch otherwise forces application/json). PUT when editing.
+            const res = await apiFetch(
+                editingId ? `/blogs/${editingId}` : '/blogs',
+                {
+                    method: editingId ? 'PUT' : 'POST',
+                    body: form,
+                    headers: {},
+                },
+            )
             const data = await res.json().catch(() => null)
             if (!res.ok) {
                 throw new Error(data?.message ?? 'Failed to save post')
@@ -123,10 +151,10 @@ function Editor() {
                 <div>
                     <p className="mb-3 font-mono text-xs uppercase tracking-[0.22em] text-muted-warm">
                         <span className="text-rust">Editor</span>{' '}
-                    <span className="text-line">/</span> New post
+                    <span className="text-line">/</span> {editingId ? 'Edit post' : 'New post'}
                     </p>
                     <h1 className="font-display text-3xl font-bold tracking-tight text-ink sm:text-4xl">
-                        Compose
+                        {editingId ? 'Edit' : 'Compose'}
                     </h1>
                 </div>
                 <div className="flex items-center gap-3">

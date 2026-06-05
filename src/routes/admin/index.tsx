@@ -5,6 +5,8 @@ import {
     ArrowUpRight,
     Eye,
     PenLine,
+    Pencil,
+    Trash2,
     TrendingUp,
     Users,
 } from 'lucide-react'
@@ -122,6 +124,12 @@ function Dashboard() {
             .then((data) => Array.isArray(data) && setPosts(data))
             .catch(() => {})
     }, [])
+
+    async function deletePost(id: string) {
+        if (!window.confirm('Delete this post? This cannot be undone.')) return
+        const res = await apiFetch(`/blogs/${id}`, { method: 'DELETE' })
+        if (res.ok) setPosts((ps) => ps.filter((p) => p._id !== id))
+    }
 
     const total = useCountUp(summary?.totalVisits ?? 0, inView, 1500)
     const series = summary?.series.map((s) => s.visits) ?? []
@@ -255,7 +263,7 @@ function Dashboard() {
                         posts.map((p) => (
                             <li
                                 key={p._id}
-                                className="grid grid-cols-[1fr_auto] items-center gap-4 border-b border-line py-5 sm:grid-cols-[1fr_8rem_8rem_5rem]"
+                                className="grid grid-cols-[1fr_auto] items-center gap-4 border-b border-line py-5 sm:grid-cols-[1fr_7rem_7rem_4rem_auto]"
                             >
                                 <span className="font-serif text-lg text-ink">
                                     {p.title}
@@ -272,9 +280,27 @@ function Dashboard() {
                                 <span className="hidden font-mono text-xs uppercase tracking-[0.16em] text-muted-warm sm:inline">
                                     {p.createdAt.slice(0, 10)}
                                 </span>
-                                <span className="justify-self-end font-mono text-xs text-muted-warm">
+                                <span className="hidden justify-self-end font-mono text-xs text-muted-warm sm:inline">
                                     {p.views.toLocaleString()} views
                                 </span>
+                                <div className="flex items-center justify-self-end gap-1">
+                                    <Link
+                                        to="/admin/editor"
+                                        search={{ edit: p._id }}
+                                        aria-label={`Edit ${p.title}`}
+                                        className="inline-flex h-8 w-8 items-center justify-center border border-line text-muted-warm transition-colors hover:border-moss/40 hover:text-moss"
+                                    >
+                                        <Pencil className="h-3.5 w-3.5" strokeWidth={1.75} />
+                                    </Link>
+                                    <button
+                                        type="button"
+                                        onClick={() => deletePost(p._id)}
+                                        aria-label={`Delete ${p.title}`}
+                                        className="inline-flex h-8 w-8 items-center justify-center border border-line text-muted-warm transition-colors hover:border-rust/40 hover:text-rust"
+                                    >
+                                        <Trash2 className="h-3.5 w-3.5" strokeWidth={1.75} />
+                                    </button>
+                                </div>
                             </li>
                         ))
                     )}
