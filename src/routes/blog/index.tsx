@@ -49,13 +49,30 @@ function Blog() {
                 intro="Notes on building for the web — the tools, the trade-offs and the lessons from shipping real things."
             />
 
-            {posts !== null && posts.length === 0 ? (
+            {posts === null ? (
+                <ol className="border-t border-line" aria-busy="true">
+                    {Array.from({ length: 4 }).map((_, i) => (
+                        <li
+                            key={i}
+                            className="grid animate-pulse gap-2 border-b border-line py-8 sm:grid-cols-[10rem_1fr]"
+                        >
+                            <span className="h-3 w-24 rounded bg-ink/[0.07]" />
+                            <div className="max-w-xl space-y-3">
+                                <span className="block h-7 w-3/4 rounded bg-ink/[0.07]" />
+                                <span className="block h-4 w-full rounded bg-ink/[0.05]" />
+                                <span className="block h-4 w-2/3 rounded bg-ink/[0.05]" />
+                                <span className="mt-3 block h-3 w-32 rounded bg-ink/[0.07]" />
+                            </div>
+                        </li>
+                    ))}
+                </ol>
+            ) : posts.length === 0 ? (
                 <p className="border-t border-line pt-8 font-display text-muted-warm">
                     No posts published yet — check back soon.
                 </p>
             ) : (
                 <ol className="border-t border-line">
-                    {(posts ?? []).map((p) => (
+                    {posts.map((p) => (
                         <li key={p._id}>
                             <Link
                                 to="/blog/$slug"
