@@ -1,10 +1,9 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
-import Markdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
 import { ArrowLeft, Eye, LoaderCircle } from 'lucide-react'
 import { apiFetch } from '#/lib/api'
 import { LikeButton } from '#/components/LikeButton'
+import { Prose } from '#/components/Prose'
 
 export const Route = createFileRoute('/blog/$slug')({ component: BlogPost })
 
@@ -110,9 +109,7 @@ function BlogPost() {
             )}
 
             {/* Body */}
-            <div className="prose prose-stone mt-10 max-w-none prose-headings:font-display prose-headings:tracking-tight prose-headings:text-ink prose-p:text-ink/80 prose-a:text-moss prose-a:no-underline hover:prose-a:underline prose-code:font-mono prose-code:text-ink prose-pre:bg-ink prose-pre:text-cream [&_pre_code]:text-cream [&_pre_code]:bg-transparent prose-strong:text-ink prose-blockquote:border-moss prose-blockquote:text-muted-warm prose-img:rounded-sm">
-                <Markdown remarkPlugins={[remarkGfm]}>{post.content}</Markdown>
-            </div>
+            <Prose className="mt-10">{post.content}</Prose>
 
             {/* Footer: views + like */}
             <div className="mt-12 flex items-center justify-between border-t border-line pt-6">

@@ -171,3 +171,62 @@ main {
     @apply font-display;
   }
 }
+
+/* Syntax highlighting (rehype-highlight → .hljs-* tokens) inside the terminal
+   code blocks (see components/Prose.tsx). Palette is gruvbox-bright so it sits
+   warm on the ink panel and rhymes with the site's moss/rust accents. */
+.hljs {
+  color: #ebdbb2;
+}
+.hljs-comment,
+.hljs-quote {
+  color: #928374;
+  font-style: italic;
+}
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-deletion,
+.hljs-doctag {
+  color: #fb4934;
+}
+.hljs-string,
+.hljs-regexp,
+.hljs-addition,
+.hljs-attribute {
+  color: #b8bb26;
+}
+.hljs-number,
+.hljs-literal {
+  color: #d3869b;
+}
+.hljs-title,
+.hljs-section,
+.hljs-title.function_,
+.hljs-name {
+  color: #8ec07c;
+}
+.hljs-type,
+.hljs-built_in,
+.hljs-class .hljs-title,
+.hljs-params {
+  color: #fabd2f;
+}
+.hljs-variable,
+.hljs-template-variable,
+.hljs-attr,
+.hljs-selector-attr,
+.hljs-selector-pseudo {
+  color: #83a598;
+}
+.hljs-symbol,
+.hljs-bullet,
+.hljs-meta,
+.hljs-link {
+  color: #fe8019;
+}
+.hljs-emphasis {
+  font-style: italic;
+}
+.hljs-strong {
+  font-weight: 700;
+}

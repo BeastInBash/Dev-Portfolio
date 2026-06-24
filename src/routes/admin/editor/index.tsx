@@ -1,19 +1,21 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import Markdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
 import {
     AlertCircle,
+    Bold,
     Check,
     Eye,
     ImageIcon,
+    Italic,
     LoaderCircle,
     Pencil,
     Save,
     Tag,
+    Underline,
     X,
 } from 'lucide-react'
 import { apiFetch } from '#/lib/api'
+import { Prose } from '#/components/Prose'
 
 export const Route = createFileRoute('/admin/editor/')({
     component: Editor,
@@ -55,6 +57,7 @@ function Editor() {
     const [submitting, setSubmitting] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const fileRef = useRef<HTMLInputElement>(null)
+    const contentRef = useRef<HTMLTextAreaElement>(null)
 
     // Edit mode: pull the existing post and pre-fill the form.
     useEffect(() => {
@@ -97,6 +100,52 @@ function Editor() {
         if (file && file.type.startsWith('image/')) {
             setBannerFile(file)
             setBanner(URL.createObjectURL(file))
+        }
+    }
+
+    // Wrap (or unwrap) the current textarea selection with markdown markers.
+    // Toggles off when the selection is already wrapped, so the shortcut/button
+    // works both ways. Reselects the inner text afterwards so chained edits work.
+    function wrapSelection(before: string, after = before) {
+        const ta = contentRef.current
+        if (!ta) return
+        const { selectionStart: s, selectionEnd: e } = ta
+        const selected = content.slice(s, e)
+        const wrapped =
+            content.slice(s - before.length, s) === before &&
+            content.slice(e, e + after.length) === after
+
+        let next: string
+        let selStart: number
+        if (wrapped) {
+            next =
+                content.slice(0, s - before.length) +
+                selected +
+                content.slice(e + after.length)
+            selStart = s - before.length
+        } else {
+            next = content.slice(0, s) + before + selected + after + content.slice(e)
+            selStart = s + before.length
+        }
+        setContent(next)
+        requestAnimationFrame(() => {
+            ta.focus()
+            ta.setSelectionRange(selStart, selStart + selected.length)
+        })
+    }
+
+    function onContentKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+        if (!(e.ctrlKey || e.metaKey) || e.altKey) return
+        const key = e.key.toLowerCase()
+        if (key === 'b') {
+            e.preventDefault()
+            wrapSelection('**')
+        } else if (key === 'i') {
+            e.preventDefault()
+            wrapSelection('*')
+        } else if (key === 'u') {
+            e.preventDefault()
+            wrapSelection('<u>', '</u>')
         }
     }
 
@@ -300,10 +349,33 @@ function Editor() {
 
             {/* Content: editor + preview */}
             <div className="mt-8">
-                <div className="mb-3 flex items-center justify-between">
-                    <span className="font-mono text-xs uppercase tracking-[0.18em] text-muted-warm">
-                        Content — Markdown
-                    </span>
+                <div className="mb-3 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                        <span className="font-mono text-xs uppercase tracking-[0.18em] text-muted-warm">
+                            Content — Markdown
+                        </span>
+                        {/* Formatting toolbar — buttons mirror the ⌘/Ctrl+B/I/U shortcuts */}
+                        <div className="flex border border-line">
+                            {(
+                                [
+                                    { icon: Bold, run: () => wrapSelection('**'), label: 'Bold (Ctrl+B)' },
+                                    { icon: Italic, run: () => wrapSelection('*'), label: 'Italic (Ctrl+I)' },
+                                    { icon: Underline, run: () => wrapSelection('<u>', '</u>'), label: 'Underline (Ctrl+U)' },
+                                ] as const
+                            ).map(({ icon: Icon, run, label }) => (
+                                <button
+                                    key={label}
+                                    type="button"
+                                    title={label}
+                                    aria-label={label}
+                                    onClick={run}
+                                    className="inline-flex h-7 w-7 items-center justify-center text-muted-warm transition-colors hover:bg-ink/[0.04] hover:text-ink"
+                                >
+                                    <Icon className="h-3.5 w-3.5" strokeWidth={2} />
+                                </button>
+                            ))}
+                        </div>
+                    </div>
                     {/* Mobile toggle (side-by-side on lg) */}
                     <div className="flex border border-line lg:hidden">
                         {(['write', 'preview'] as const).map((m) => (
@@ -331,8 +403,10 @@ function Editor() {
                 <div className="grid overflow-hidden border border-line lg:grid-cols-2 lg:divide-x lg:divide-line">
                     {/* Write */}
                     <textarea
+                        ref={contentRef}
                         value={content}
                         onChange={(e) => setContent(e.target.value)}
+                        onKeyDown={onContentKeyDown}
                         spellCheck={false}
                         className={`min-h-[28rem] w-full resize-y bg-cream p-6 font-mono text-sm leading-relaxed text-ink outline-none placeholder:text-muted-warm/60 ${
                             mode === 'preview' ? 'hidden lg:block' : 'block'
@@ -344,11 +418,9 @@ function Editor() {
                             mode === 'write' ? 'hidden lg:block' : 'block'
                         }`}
                     >
-                        <article className="prose prose-sm prose-stone max-w-none prose-headings:font-display prose-headings:tracking-tight prose-headings:text-ink prose-p:text-ink/80 prose-a:text-moss prose-a:no-underline hover:prose-a:underline prose-code:font-mono prose-code:text-ink prose-pre:bg-ink prose-pre:text-cream [&_pre_code]:text-cream [&_pre_code]:bg-transparent prose-strong:text-ink prose-blockquote:border-moss prose-blockquote:text-muted-warm">
-                            <Markdown remarkPlugins={[remarkGfm]}>
-                                {content || '*Nothing to preview yet.*'}
-                            </Markdown>
-                        </article>
+                        <Prose className="prose-sm">
+                            {content || '*Nothing to preview yet.*'}
+                        </Prose>
                     </div>
                 </div>
             </div>

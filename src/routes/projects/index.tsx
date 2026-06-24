@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowUpRight } from 'lucide-react'
 import { PageHeading } from '#/components/PageHeading'
+import { ContributionGraph } from '#/components/ContributionGraph'
 
 export const Route = createFileRoute('/projects/')({ component: Projects })
 
@@ -54,6 +55,13 @@ function Projects() {
                     </li>
                 ))}
             </ul>
+
+            <div className="mt-20">
+                <p className="mb-6 font-mono text-xs uppercase tracking-[0.22em] text-muted-warm">
+                    Activity <span className="text-line">/</span> Contributions
+                </p>
+                <ContributionGraph />
+            </div>
         </section>
     )
 }
